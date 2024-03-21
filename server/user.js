@@ -5,19 +5,19 @@ import * as db from "./../db/index.js"
 const userRouter = express.Router()
 
 userRouter.post(
-   "user/login",
+   "/user/login",
    passport.authenticate("local", {
       failureRedirect: "/login",
       successRedirect: "/",
    })
 )
 
-userRouter.get("user/logout", (request, response) => {
+userRouter.get("/user/logout", (request, response) => {
    request.logout()
    response.redirect("/")
 })
 
-userRouter.post("user/register", async (request, response) => {
+userRouter.post("/user/register", async (request, response) => {
    const { username, password } = request.body
    try {
       const findUser = await db.query("SELECT * FROM users WHERE username = $1", [username])

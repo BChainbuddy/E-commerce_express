@@ -68,6 +68,16 @@ cartRouter.post("/cart/:username", ensureAuthenticated, async (request, response
    }
 })
 
+cartRouter.delete("/cart/:username", ensureAuthenticated, async (request, response) => {
+   try {
+      await db.query("DELETE FROM cart_items WHERE cart_id = $1", [request.cartId])
+      response.status(204).send("Cart cleared successully")
+   } catch (error) {
+      console.error(error)
+      response.status(500).send("An error occurred.")
+   }
+})
+
 cartRouter.put("/cart/:username/:itemId", async (request, response) => {
    const { quantity } = request.body
    if (typeof quantity === "Number" && quantity > 0) {
@@ -91,16 +101,6 @@ cartRouter.put("/cart/:username/:itemId", async (request, response) => {
       }
    } else {
       response.status(404).send("The body doesn't containt the expected values")
-   }
-})
-
-cartRouter.delete("/cart/:username", ensureAuthenticated, async (request, response) => {
-   try {
-      await db.query("DELETE FROM cart_items WHERE cart_id = $1", [request.cartId])
-      response.status(204).send("Cart cleared successully")
-   } catch (error) {
-      console.error(error)
-      response.status(500).send("An error occurred.")
    }
 })
 
