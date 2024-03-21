@@ -303,6 +303,11 @@ dotdir-regex@^0.1.0:
   resolved "https://registry.yarnpkg.com/dotdir-regex/-/dotdir-regex-0.1.0.tgz#d45df4c8863be6f5593d716914381767e938c0b6"
   integrity sha512-00odj/E9hnwoi/W0ZcudUwlR/OSjhMgcBgevA4G8tgSJdGy0cVIKrmKLkh97Kw6aXvE47islrIisBld19+X1AQ==
 
+dotenv@^16.4.5:
+  version "16.4.5"
+  resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-16.4.5.tgz#cdd3b3b604cb327e286b4762e13502f717cb099f"
+  integrity sha512-ZmdL2rui+eB2YwhsWzjInR8LldtZHGDoQ1ugH85ppHKwpUHL7j7rN0Ti9NCnGiQbhaZ11FpR+7ao1dNsmduNUg==
+
 ee-first@1.1.1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/ee-first/-/ee-first-1.1.1.tgz#590c61156b0ae2f4f0255732a158b266bc56b21d"
@@ -988,7 +993,7 @@ micromatch@^2.3.11, micromatch@^2.3.7:
     parse-glob "^3.0.4"
     regex-cache "^0.4.2"
 
-"micromatch@github:jonschlinkert/micromatch#2.2.0":
+micromatch@jonschlinkert/micromatch#2.2.0:
   version "2.2.0"
   resolved "https://codeload.github.com/jonschlinkert/micromatch/tar.gz/5017fd78202e04c684cc31d3c2fb1f469ea222ff"
   dependencies:
