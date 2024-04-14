@@ -4,17 +4,13 @@ import * as db from "./../db/index.js"
 
 const cartRouter = express.Router()
 
-cartRouter.use("/cart/:username", ensureAuthenticated, async (request, response, next) => {
+cartRouter.use("/cart", ensureAuthenticated, async (request, response, next) => {
    // To get cart Id
    try {
-      let cartId = await db.query("SELECT id FROM cart WHERE username = $1", [
-         request.params.username,
-      ])
-      if (!cartId) {
-         await db.query("INSERT INTO cart(username) VALUES($1)", [username])
-         cartId = await db.query("SELECT id FROM cart WHERE username = $1", [
-            request.params.username,
-         ])
+      let cartId = await db.query("SELECT id FROM cart WHERE username = $1", [request.user])
+      if (!cartId.rows[0]) {
+         await db.query("INSERT INTO cart(username) VALUES($1)", [request.user])
+         cartId = await db.query("SELECT id FROM cart WHERE username = $1", [request.user])
       }
       request.cartId = cartId.rows[0].id
       next()
@@ -24,7 +20,7 @@ cartRouter.use("/cart/:username", ensureAuthenticated, async (request, response,
    }
 })
 
-cartRouter.get("/cart/:username", ensureAuthenticated, async (request, response) => {
+cartRouter.get("/cart", ensureAuthenticated, async (request, response) => {
    try {
       const cartItems = await db.query(
          "SELECT items.id, items.name, cart_items.quantity, prices.price, (prices.price * ((100 - prices.discount) / 100) * cart_items.quantity) as cart_value from  cart_items join items on cart_items.items_id = items_id join prices on items.id = prices.items_id WHERE cart_items.cart_id = $1",
@@ -37,7 +33,7 @@ cartRouter.get("/cart/:username", ensureAuthenticated, async (request, response)
    }
 })
 
-cartRouter.post("/cart/:username", ensureAuthenticated, async (request, response) => {
+cartRouter.post("/cart", ensureAuthenticated, async (request, response) => {
    const { itemId, quantity } = request.body
    if (typeof itemId === "number" && typeof quantity === "Number" && quantity > 0) {
       const doesItemExist = await db.query("SELECT id FROM items WHERE id = $1", [itemId])
@@ -68,7 +64,7 @@ cartRouter.post("/cart/:username", ensureAuthenticated, async (request, response
    }
 })
 
-cartRouter.delete("/cart/:username", ensureAuthenticated, async (request, response) => {
+cartRouter.delete("/cart", ensureAuthenticated, async (request, response) => {
    try {
       await db.query("DELETE FROM cart_items WHERE cart_id = $1", [request.cartId])
       response.status(204).send("Cart cleared successully")
@@ -78,7 +74,7 @@ cartRouter.delete("/cart/:username", ensureAuthenticated, async (request, respon
    }
 })
 
-cartRouter.put("/cart/:username/:itemId", async (request, response) => {
+cartRouter.put("/cart/:itemId", async (request, response) => {
    const { quantity } = request.body
    if (typeof quantity === "Number" && quantity > 0) {
       const isInCart = await db.query(
@@ -104,11 +100,11 @@ cartRouter.put("/cart/:username/:itemId", async (request, response) => {
    }
 })
 
-cartRouter.delete("/cart/:username/:itemId", ensureAuthenticated, async (request, response) => {
+cartRouter.delete("/cart/:itemId", ensureAuthenticated, async (request, response) => {
    try {
       await db.query("DELETE FROM cart_items WHERE cart_id = $1 AND items_id = $2", [
          request.cartId,
-         request.params.itemId,
+         request.params.itemId
       ])
       response.status(204).send("Item deleted successully")
    } catch (error) {
@@ -117,13 +113,13 @@ cartRouter.delete("/cart/:username/:itemId", ensureAuthenticated, async (request
    }
 })
 
-cartRouter.post("/cart/:username/checkout", ensureAuthenticated, async (request, response) => {
+cartRouter.post("/cart/checkout", ensureAuthenticated, async (request, response) => {
    const numberOfItems = await db.query(
       "SELECT COUNT(*) FROM cart JOIN cart_items on cart.id = cart_items.cart_id WHERE cart.id = $1",
       [request.cartId]
    )
    const cartItemIds = await db.query("SELECT items_id FROM cart_items WHERE cart_id = $1", [
-      request.cartId,
+      request.cartId
    ])
    console.log(cartItemIds)
    if (numberOfItems > 0) {
@@ -146,7 +142,7 @@ cartRouter.post("/cart/:username/checkout", ensureAuthenticated, async (request,
             "SELECT * items_id FROM cart_items WHERE cart_id = $1",
             [req.cartId]
          )
-         Object.values(cartItemIds.rows).forEach(async (item) => {
+         Object.values(cartItemIds.rows).forEach(async item => {
             await db.query("INSERT INTO orders_items($1, $2)", [orderId.rows[0].id, item])
          })
          // Clear cart
