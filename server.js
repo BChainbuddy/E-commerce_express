@@ -39,7 +39,7 @@ app.use(
       cookie: {
          maxAge: 1000 * 60 * 60 * 24,
          sameSite: "none",
-         secure: process.env.HTTPS,
+         secure: process.env.HTTPS === "true" ? true : false,
          httpOnly: true
       },
       store: new MemoryStore({
