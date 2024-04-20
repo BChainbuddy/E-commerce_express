@@ -10,6 +10,8 @@ import cors from "cors"
 import "./config/passportConfig.js"
 import path from "path"
 import { fileURLToPath } from "url"
+import dotenv from "dotenv"
+dotenv.config()
 
 const app = express()
 
@@ -22,7 +24,7 @@ app.listen(port, () => {
 app.use(express.json())
 app.use(
    cors({
-      origin: "http://localhost:3000", // adjust this to match your front-end URL
+      origin: process.env.CLIENT_URL,
       credentials: true
    })
 )
