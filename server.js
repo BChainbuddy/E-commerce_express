@@ -11,9 +11,11 @@ import "./config/passportConfig.js"
 import path from "path"
 import { fileURLToPath } from "url"
 import dotenv from "dotenv"
+import MemoryStoreCreator from "memorystore"
 dotenv.config()
-
 const app = express()
+
+const MemoryStore = MemoryStoreCreator(session)
 
 const port = "8001"
 
@@ -40,6 +42,9 @@ app.use(
          secure: false,
          httpOnly: true
       },
+      store: new MemoryStore({
+         checkPeriod: 86400000
+      }),
       saveUninitialized: false,
       resave: false
    })
