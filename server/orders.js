@@ -15,7 +15,6 @@ ordersRouter.get("/orders", ensureAuthenticated, async (request, response) => {
 })
 
 ordersRouter.get("/orders/:orderId", ensureAuthenticated, async (request, response) => {
-   console.log("GOT IT2")
    try {
       const orderItems = await db.query(
          "SELECT items.id, items.name, orders_items.price, orders_items.quantity FROM orders_items JOIN items on items.id = orders_items.items_id WHERE orders_items.orders_id = $1",
