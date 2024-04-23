@@ -49,10 +49,8 @@ passport.use(
                   authType
                ])
                const user = await db.query("SELECT * FROM users WHERE username = $1", [email])
-               console.log("User found!")
                return cb(null, user.rows[0])
             } else {
-               console.log("User found!")
                return cb(null, user.rows[0])
             }
          })
@@ -61,11 +59,9 @@ passport.use(
 )
 
 passport.serializeUser((user, done) => {
-   console.log(`Serialize ${user.username}`)
    done(null, user.username)
 })
 
 passport.deserializeUser(async (username, done) => {
-   console.log("Retrieving username ", username)
    done(null, username)
 })
